@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Igreja Chama Arca</title>
+<style>
+  :root{
+    --bg:#150F0B;
+    --bg-alt:#1D1510;
+    --wood:#241A13;
+    --card:#291E16;
+    --card-border:#3E2C1E;
+    --ember:#E8590C;
+    --ember-light:#FF8A3D;
+    --gold:#FFB627;
+    --deep-red:#9C2B1C;
+    --text:#F5EBDD;
+    --text-muted:#C7B29C;
+    --text-dim:#8F7B67;
+    --font-display:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(232,89,12,.18), transparent 45%),
+      radial-gradient(ellipse at 90% 0%, rgba(255,182,39,.10), transparent 40%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--ember-light);}
+  ::selection{background:var(--ember);color:#150F0B;}
+
+  /* ---------- Ambient ember particles ---------- */
+  #embers{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+  .ember-dot{
+    position:absolute;bottom:-10px;width:4px;height:4px;border-radius:50%;
+    background:var(--gold);opacity:0;
+    animation:rise linear infinite;
+    box-shadow:0 0 6px 1px rgba(255,182,39,.8);
+  }
+  @keyframes rise{
+    0%{transform:translateY(0) translateX(0);opacity:0;}
+    10%{opacity:.9;}
+    90%{opacity:.4;}
+    100%{transform:translateY(-110vh) translateX(20px);opacity:0;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ember-dot{animation:none;display:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  /* ---------- Header ---------- */
+  header.ca-header{
+    position:sticky;top:0;z-index:50;
+    background:linear-gradient(180deg, rgba(21,15,11,.97), rgba(21,15,11,.90));
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--card-border);
+  }
+  .ca-header-inner{
+    max-width:1100px;margin:0 auto;padding:14px 20px;
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  }
+  .ca-logo{display:flex;align-items:center;gap:12px;flex:1;min-width:220px;}
+  .ca-flame{width:34px;height:34px;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(232,89,12,.6));}
+  .ca-flame .tip{animation:flicker 2.6s ease-in-out infinite;transform-origin:50% 85%;}
+  .ca-flame .core{animation:flicker 2.1s ease-in-out infinite reverse;transform-origin:50% 90%;}
+  @keyframes flicker{
+    0%,100%{transform:scale(1) skewX(0deg);}
+    25%{transform:scale(1.03,0.97) skewX(-1.5deg);}
+    50%{transform:scale(0.97,1.04) skewX(1deg);}
+    75%{transform:scale(1.02,0.98) skewX(-0.5deg);}
+  }
+  .ca-titles h1{
+    font-family:var(--font-display);font-weight:700;font-size:1.35rem;margin:0;
+    letter-spacing:.02em;color:var(--text);
+  }
+  .ca-titles p{margin:0;font-size:.78rem;color:var(--text-dim);letter-spacing:.03em;}
+  .ca-cta{
+    background:linear-gradient(135deg,var(--ember),var(--gold));
+    color:#1a1108;border:none;padding:9px 16px;border-radius:999px;
+    font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap;
+  }
+  .ca-cta:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+    outline:2px solid var(--gold);outline-offset:2px;
+  }
+
+  nav.ca-tabs{
+    max-width:1100px;margin:0 auto;padding:0 12px 10px;
+    display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;
+  }
+  nav.ca-tabs::-webkit-scrollbar{height:5px;}
+  nav.ca-tabs::-webkit-scrollbar-thumb{background:var(--card-border);border-radius:4px;}
+  .ca-tab{
+    flex-shrink:0;background:transparent;border:1px solid transparent;
+    color:var(--text-muted);padding:8px 14px;border-radius:10px;
+    font-family:var(--font-body);font-size:.86rem;font-weight:600;cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .ca-tab:hover{color:var(--text);background:rgba(232,89,12,.10);}
+  .ca-tab.active{
+    color:#1a1108;background:linear-gradient(135deg,var(--ember-light),var(--gold));
+    border-color:transparent;
+  }
+
+  /* ---------- Layout ---------- */
+  main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:28px 20px 80px;}
+  .ca-panel{display:none;animation:fadein .35s ease;}
+  .ca-panel.active{display:block;}
+  @keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .ca-hero{
+    padding:34px 0 20px;border-bottom:1px solid var(--card-border);margin-bottom:26px;
+  }
+  .ca-hero .eyebrow{
+    text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;color:var(--ember-light);font-weight:700;
+  }
+  .ca-hero h2{
+    font-family:var(--font-display);font-size:2rem;margin:.35em 0 .2em;color:var(--text);
+  }
+  .ca-hero p.lead{color:var(--text-muted);max-width:60ch;margin:0;}
+  .ca-addr{
+    margin-top:14px;font-size:.85rem;color:var(--text-dim);display:flex;align-items:center;gap:8px;
+  }
+
+  .ca-section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+  .ca-section-head h3{font-family:var(--font-display);font-size:1.4rem;margin:0;color:var(--text);}
+  .ca-section-head .sub{color:var(--text-dim);font-size:.85rem;}
+
+  .ca-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+  @media(min-width:760px){.ca-grid.cols-2{grid-template-columns:1.1fr .9fr;align-items:start;}}
+
+  .ca-card{
+    background:linear-gradient(180deg, var(--card), var(--wood));
+    border:1px solid var(--card-border);border-radius:14px;padding:18px 18px;
+  }
+  .ca-card h4{margin:0 0 4px;font-family:var(--font-display);font-size:1.05rem;color:var(--gold);}
+  .ca-card .meta{font-size:.72rem;color:var(--text-dim);margin-bottom:8px;}
+  .ca-card p{margin:.3em 0 0;color:var(--text-muted);white-space:pre-wrap;}
+  .ca-card .row-actions{margin-top:10px;display:flex;gap:10px;}
+  .ca-list{display:flex;flex-direction:column;gap:12px;}
+  .ca-empty{
+    border:1px dashed var(--card-border);border-radius:14px;padding:26px 18px;text-align:center;
+    color:var(--text-dim);font-size:.9rem;
+  }
+
+  form.ca-form{display:flex;flex-direction:column;gap:12px;}
+  .ca-field label{display:block;font-size:.78rem;font-weight:700;letter-spacing:.02em;color:var(--text-muted);margin-bottom:6px;}
+  .ca-field input[type=text],
+  .ca-field input[type=date],
+  .ca-field input[type=tel],
+  .ca-field input[type=email],
+  .ca-field select,
+  .ca-field textarea{
+    width:100%;background:var(--bg-alt);border:1px solid var(--card-border);color:var(--text);
+    padding:10px 12px;border-radius:9px;font-family:var(--font-body);font-size:.92rem;
+  }
+  .ca-field textarea{resize:vertical;min-height:80px;}
+  .ca-field.radios{display:flex;gap:18px;flex-wrap:wrap;}
+  .ca-field.radios .opt{display:flex;align-items:center;gap:6px;font-size:.88rem;color:var(--text-muted);}
+  .ca-submit{
+    align-self:flex-start;background:linear-gradient(135deg,var(--ember),var(--deep-red));
+    color:#fff;border:none;padding:11px 20px;border-radius:9px;font-weight:700;
+    font-size:.9rem;cursor:pointer;letter-spacing:.01em;
+  }
+  .ca-submit:hover{filter:brightness(1.08);}
+  .ca-linkbtn{background:none;border:none;color:var(--text-dim);font-size:.78rem;cursor:pointer;text-decoration:underline;padding:0;}
+  .ca-linkbtn:hover{color:var(--ember-light);}
+
+  .badge{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    padding:3px 9px;border-radius:999px;background:rgba(232,89,12,.16);color:var(--ember-light);}
+  .badge.gold{background:rgba(255,182,39,.16);color:var(--gold);}
+  .badge.red{background:rgba(156,43,28,.22);color:#ff9a86;}
+
+  .ca-contact-card{display:flex;gap:14px;align-items:flex-start;}
+  .ca-avatar{
+    width:52px;height:52px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,var(--ember),var(--gold));
+    display:flex;align-items:center;justify-content:center;font-family:var(--font-display);
+    font-weight:700;color:#1a1108;font-size:1.1rem;
+  }
+  .ca-whats{
+    display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:.82rem;font-weight:700;
+    color:#5CD65C;text-decoration:none;
+  }
+
+  footer.ca-footer{
+    border-top:1px solid var(--card-border);margin-top:40px;padding:26px 20px;text-align:center;
+    color:var(--text-dim);font-size:.8rem;
+  }
+  footer.ca-footer .flamef{opacity:.5;}
+
+  /* ---------- Modal (questionário) ---------- */
+  .ca-modal-overlay{
+    position:fixed;inset:0;background:rgba(10,7,5,.82);backdrop-filter:blur(3px);
+    display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;
+  }
+  .ca-modal-overlay.hidden{display:none;}
+  .ca-modal{
+    background:linear-gradient(180deg,var(--card),var(--wood));border:1px solid var(--card-border);
+    border-radius:16px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;padding:26px 24px;
+  }
+  .ca-modal h3{font-family:var(--font-display);margin-top:0;color:var(--gold);}
+  .ca-modal .intro{color:var(--text-muted);font-size:.88rem;margin-bottom:18px;}
+
+  .ca-toast{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(140%);
+    background:linear-gradient(135deg,var(--ember),var(--gold));color:#1a1108;font-weight:700;
+    padding:12px 22px;border-radius:999px;font-size:.86rem;z-index:200;
+    transition:transform .35s ease;box-shadow:0 8px 24px rgba(0,0,0,.4);
+  }
+  .ca-toast.show{transform:translateX(-50%) translateY(0);}
+
+  .ca-cell-day{
+    display:inline-block;background:var(--bg-alt);border:1px solid var(--card-border);
+    padding:2px 9px;border-radius:6px;font-size:.72rem;color:var(--gold);font-weight:700;margin-right:6px;
+  }
+
+  @media(max-width:600px){
+    .ca-hero h2{font-size:1.6rem;}
+    .ca-header-inner{gap:10px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="embers"></div>
+
+<header class="ca-header">
+  <div class="ca-header-inner">
+    <div class="ca-logo">
+      <svg class="ca-flame" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path class="tip" d="M24 4C24 4 33 15 33 24C33 30 29 34 24 34C19 34 15 30 15 24C15 15 24 4 24 4Z" fill="#FFB627"/>
+        <path class="core" d="M24 18C24 18 28.5 25 28.5 29.5C28.5 33 26.5 36 24 36C21.5 36 19.5 33 19.5 29.5C19.5 25 24 18 24 18Z" fill="#E8590C"/>
+      </svg>
+      <div class="ca-titles">
+        <h1>Igreja Chama Arca</h1>
+        <p>Av. Pau Brasil, 1706 — Samambaia, Praia Grande/SP</p>
+      </div>
+    </div>
+    <button class="ca-cta" onclick="openQuestionario(true)">Meu cadastro</button>
+  </div>
+  <nav class="ca-tabs" id="tabsNav"></nav>
+</header>
+
+<main id="mainContent"></main>
+
+<footer class="ca-footer">
+  <span class="flamef">🔥</span> Igreja Chama Arca — Av. Pau Brasil, 1706, Samambaia, Praia Grande/SP<br>
+  "Onde a chama da fé encontra abrigo." — os dados deste site ficam salvos neste navegador.
+</footer>
+
+<div class="ca-modal-overlay hidden" id="modalOverlay">
+  <div class="ca-modal">
+    <h3>Bem-vindo(a) à família Chama Arca!</h3>
+    <p class="intro">Antes de continuar, preencha este breve cadastro. Leva menos de 2 minutos e ajuda nossa liderança a te conhecer melhor.</p>
+    <form class="ca-form" id="formQuestionario">
+      <div class="ca-field">
+        <label for="q_nome">Nome completo</label>
+        <input type="text" id="q_nome" required>
+      </div>
+      <div class="ca-field">
+        <label for="q_nasc">Data de nascimento</label>
+        <input type="date" id="q_nasc" required>
+      </div>
+      <div class="ca-field radios">
+        <label style="width:100%;margin-bottom:-4px;">Já é batizado(a)?</label>
+        <label class="opt"><input type="radio" name="q_batizado" value="Sim" required> Sim</label>
+        <label class="opt"><input type="radio" name="q_batizado" value="Não"> Não</label>
+      </div>
+      <div class="ca-field radios">
+        <label style="width:100%;margin-bottom:-4px;">Já exerceu alguma função em uma igreja?</label>
+        <label class="opt"><input type="radio" name="q_funcao" value="Sim" required> Sim</label>
+        <label class="opt"><input type="radio" name="q_funcao" value="Não"> Não</label>
+      </div>
+      <div class="ca-field" id="q_funcao_qual_wrap" style="display:none;">
+        <label for="q_funcao_qual">Qual função?</label>
+        <input type="text" id="q_funcao_qual" placeholder="Ex: louvor, recepção, mídia...">
+      </div>
+      <div class="ca-field radios">
+        <label style="width:100%;margin-bottom:-4px;">Já aceitou Jesus como Salvador?</label>
+        <label class="opt"><input type="radio" name="q_aceitou" value="Sim" required> Sim</label>
+        <label class="opt"><input type="radio" name="q_aceitou" value="Não"> Não</label>
+      </div>
+      <div class="ca-field">
+        <label for="q_tempo">Há quanto tempo serve a Jesus?</label>
+        <select id="q_tempo" required>
+          <option value="">Selecione...</option>
+          <option>Ainda não sirvo, estou conhecendo</option>
+          <option>Menos de 1 ano</option>
+          <option>1 a 3 anos</option>
+          <option>3 a 10 anos</option>
+          <option>Mais de 10 anos</option>
+        </select>
+      </div>
+      <button class="ca-submit" type="submit">Salvar meu cadastro</button>
+      <button type="button" class="ca-linkbtn" onclick="closeQuestionario()">Preencher depois</button>
+    </form>
+  </div>
+</div>
+
+<div class="ca-toast" id="toast"></div>
+
+<script>
+/* ================= Utilidades de armazenamento ================= */
+const DB = {
+  get(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } },
+  set(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+};
+const uid = () => Math.random().toString(36).slice(2,10);
+const fmtDate = (iso) => { if(!iso) return ''; const d = new Date(iso); if(isNaN(d)) return iso; return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}); };
+const nowLabel = () => new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function escapeHtml(str){
+  return (str||'').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
+
+/* ================= Embers de fundo ================= */
+(function initEmbers(){
+  const wrap = document.getElementById('embers');
+  const n = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 18;
+  for(let i=0;i<n;i++){
+    const d = document.createElement('div');
+    d.className = 'ember-dot';
+    d.style.left = Math.random()*100+'%';
+    d.style.animationDuration = (7+Math.random()*8).toFixed(2)+'s';
+    d.style.animationDelay = (Math.random()*10).toFixed(2)+'s';
+    d.style.opacity = (0.3+Math.random()*0.5).toFixed(2);
+    wrap.appendChild(d);
+  }
+})();
+
+/* ================= Definição das abas ================= */
+const TABS = [
+  {id:'recados', label:'Recados'},
+  {id:'obreiros', label:'Escala de Obreiros'},
+  {id:'musicos', label:'Escala de Músicos'},
+  {id:'oracao', label:'Pedidos de Oração'},
+  {id:'feedback', label:'Elogios & Sugestões'},
+  {id:'contato', label:'Fale com os Pastores'},
+  {id:'celulas', label:'Células'},
+];
+
+const tabsNav = document.getElementById('tabsNav');
+TABS.forEach(t=>{
+  const b = document.createElement('button');
+  b.className='ca-tab'; b.textContent=t.label; b.dataset.tab=t.id;
+  b.onclick = ()=> showTab(t.id);
+  tabsNav.appendChild(b);
+});
+
+function showTab(id){
+  document.querySelectorAll('.ca-tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
+  document.querySelectorAll('.ca-panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+id));
+  localStorage.setItem('ca_lastTab', id);
+  window.scrollTo({top:0, behavior:'instant' in window ? 'instant':'auto'});
+}
+
+/* ================= Painel: Recados ================= */
+function renderRecados(){
+  const items = DB.get('ca_recados', []);
+  const list = items.length ? items.slice().reverse().map(it => `
+    <div class="ca-card">
+      <span class="badge">Recado</span>
+      <h4>${escapeHtml(it.titulo)}</h4>
+      <div class="meta">${escapeHtml(it.autor||'Liderança')} · ${fmtDate(it.data)}</div>
+      <p>${escapeHtml(it.mensagem)}</p>
+      <div class="row-actions"><button class="ca-linkbtn" onclick="removeItem('ca_recados','${it.id}', renderRecados)">Remover</button></div>
+    </div>`).join('') : `<div class="ca-empty">Nenhum recado publicado ainda. Seja o primeiro a avisar a igreja!</div>`;
+
+  return `
+  <section class="ca-hero">
+    <div class="eyebrow">Mural da igreja</div>
+    <h2>Recados importantes</h2>
+    <p class="lead">Avisos, comunicados e novidades da Chama Arca para toda a família da fé.</p>
+  </section>
+  <div class="ca-grid cols-2">
+    <div class="ca-list">${list}</div>
+    <div class="ca-card">
+      <h4>Publicar um recado</h4>
+      <form class="ca-form" onsubmit="return addRecado(event)">
+        <div class="ca-field"><label>Título</label><input type="text" id="rc_titulo" required></div>
+        <div class="ca-field"><label>Mensagem</label><textarea id="rc_mensagem" required></textarea></div>
+        <div class="ca-field"><label>Assinado por (opcional)</label><input type="text" id="rc_autor" placeholder="Ex: Pastor João"></div>
+        <button class="ca-submit" type="submit">Publicar recado</button>
+      </form>
+    </div>
+  </div>`;
+}
+function addRecado(e){
+  e.preventDefault();
+  const items = DB.get('ca_recados', []);
+  items.push({id:uid(), titulo:document.getElementById('rc_titulo').value.trim(), mensagem:document.getElementById('rc_mensagem').value.trim(), autor:document.getElementById('rc_autor').value.trim(), data:new Date().toISOString()});
+  DB.set('ca_recados', items);
+  document.getElementById('panel-recados').innerHTML = renderRecados();
+  toast('Recado publicado!');
+  return false;
+}
+
+/* ================= Painel genérico de Escalas ================= */
+function renderEscala(kind){
+  const key = kind==='obreiros' ? 'ca_escala_obreiros' : 'ca_escala_musicos';
+  const items = DB.get(key, []);
+  const titulo = kind==='obreiros' ? 'Escala de Obreiros' : 'Escala de Músicos';
+  const campoLabel = kind==='obreiros' ? 'Função / Setor' : 'Instrumento / Voz';
+  const list = items.length ? items.slice().reverse().map(it => `
+    <div class="ca-card">
+      <span class="badge gold">${escapeHtml(it.periodo)}</span>
+      <h4>${escapeHtml(it.nomes)}</h4>
+      <div class="meta">${escapeHtml(it.campo)} · ${escapeHtml(it.culto)}</div>
+      ${it.obs ? `<p>${escapeHtml(it.obs)}</p>` : ''}
+      <div class="row-actions"><button class="ca-linkbtn" onclick="removeItem('${key}','${it.id}', ()=>document.getElementById('panel-${kind}').innerHTML = renderEscala('${kind}'))">Remover</button></div>
+    </div>`).join('') : `<div class="ca-empty">Nenhuma escala lançada ainda para este período.</div>`;
+
+  return `
+  <section class="ca-hero">
+    <div class="eyebrow">Serviço e adoração</div>
+    <h2>${titulo}</h2>
+    <p class="lead">Confira quem está escalado para servir na semana ou no mês.</p>
+  </section>
+  <div class="ca-grid cols-2">
+    <div class="ca-list">${list}</div>
+    <div class="ca-card">
+      <h4>Lançar escala</h4>
+      <form class="ca-form" onsubmit="return addEscala(event,'${kind}')">
+        <div class="ca-field"><label>${campoLabel}</label><input type="text" id="es_campo_${kind}" required></div>
+        <div class="ca-field"><label>Nome(s)</label><input type="text" id="es_nomes_${kind}" required placeholder="Separe por vírgula"></div>
+        <div class="ca-field"><label>Culto / Dia</label><input type="text" id="es_culto_${kind}" required placeholder="Ex: Domingo (noite) - 20/07"></div>
+        <div class="ca-field"><label>Período</label>
+          <select id="es_periodo_${kind}">
+            <option>Semanal</option>
+            <option>Mensal</option>
+          </select>
+        </div>
+        <div class="ca-field"><label>Observações (opcional)</label><textarea id="es_obs_${kind}"></textarea></div>
+        <button class="ca-submit" type="submit">Lançar escala</button>
+      </form>
+    </div>
+  </div>`;
+}
+function addEscala(e, kind){
+  e.preventDefault();
+  const key = kind==='obreiros' ? 'ca_escala_obreiros' : 'ca_escala_musicos';
+  const items = DB.get(key, []);
+  items.push({
+    id:uid(),
+    campo:document.getElementById('es_campo_'+kind).value.trim(),
+    nomes:document.getElementById('es_nomes_'+kind).value.trim(),
+    culto:document.getElementById('es_culto_'+kind).value.trim(),
+    periodo:document.getElementById('es_periodo_'+kind).value,
+    obs:document.getElementById('es_obs_'+kind).value.trim(),
+  });
+  DB.set(key, items);
+  document.getElementById('panel-'+kind).innerHTML = renderEscala(kind);
+  toast('Escala lançada!');
+  return false;
+}
+
+/* ================= Painel: Pedidos de Oração ================= */
+function renderOracao(){
+  const items = DB.get('ca_oracao', []);
+  const list = items.length ? items.slice().reverse().map(it => `
+    <div class="ca-card">
+      <span class="badge red">Pedido de oração</span>
+      <h4>${it.anonimo ? 'Pedido anônimo' : escapeHtml(it.nome)}</h4>
+      <div class="meta">${fmtDate(it.data)}</div>
+      <p>${escapeHtml(it.pedido)}</p>
+      <div class="row-actions"><button class="ca-linkbtn" onclick="removeItem('ca_oracao','${it.id}', renderOracaoPanel)">Remover</button></div>
+    </div>`).join('') : `<div class="ca-empty">Nenhum pedido de oração no momento.</div>`;
+
+  return `
+  <section class="ca-hero">
+    <div class="eyebrow">Intercessão</div>
+    <h2>Pedidos de oração</h2>
+    <p class="lead">Compartilhe seu pedido com a igreja. Vamos orar juntos por você.</p>
+  </section>
+  <div class="ca-grid cols-2">
+    <div class="ca-list">${list}</div>
+    <div class="ca-card">
+      <h4>Enviar pedido de oração</h4>
+      <form class="ca-form" onsubmit="return addOracao(event)">
+        <div class="ca-field"><label>Seu nome</label><input type="text" id="or_nome"></div>
+        <div class="ca-field"><label class="opt" style="display:flex;align-items:center;gap:8px;font-weight:400;"><input type="checkbox" id="or_anon" style="width:auto;"> Prefiro manter anônimo</label></div>
+        <div class="ca-field"><label>Seu pedido</label><textarea id="or_pedido" required></textarea></div>
+        <button class="ca-submit" type="submit">Enviar pedido</button>
+      </form>
+    </div>
+  </div>`;
+}
+function renderOracaoPanel(){ document.getElementById('panel-oracao').innerHTML = renderOracao(); }
+function addOracao(e){
+  e.preventDefault();
+  const items = DB.get('ca_oracao', []);
+  const anon = document.getElementById('or_anon').checked;
+  items.push({id:uid(), nome:document.getElementById('or_nome').value.trim()||'Anônimo', anonimo:anon, pedido:document.getElementById('or_pedido').value.trim(), data:new Date().toISOString()});
+  DB.set('ca_oracao', items);
+  renderOracaoPanel();
+  toast('Pedido enviado. Estaremos orando! 🙏');
+  return false;
+}
+
+/* ================= Painel: Elogios & Sugestões ================= */
+function renderFeedback(){
+  const items = DB.get('ca_feedback', []);
+  const list = items.length ? items.slice().reverse().map(it => `
+    <div class="ca-card">
+      <span class="badge ${it.tipo==='Elogio'?'gold':''}">${escapeHtml(it.tipo)}</span>
+      <h4>${it.anonimo ? 'Envio anônimo' : escapeHtml(it.nome)}</h4>
+      <div class="meta">${fmtDate(it.data)}</div>
+      <p>${escapeHtml(it.mensagem)}</p>
+      <div class="row-actions"><button class="ca-linkbtn" onclick="removeItem('ca_feedback','${it.id}', renderFeedbackPanel)">Remover</button></div>
+    </div>`).join('') : `<div class="ca-empty">Nenhum elogio ou sugestão enviado ainda.</div>`;
+
+  return `
+  <section class="ca-hero">
+    <div class="eyebrow">Sua voz importa</div>
+    <h2>Elogios & sugestões</h2>
+    <p class="lead">Ajude a Chama Arca a crescer: conte o que está bom e o que pode melhorar.</p>
+  </section>
+  <div class="ca-grid cols-2">
+    <div class="ca-list">${list}</div>
+    <div class="ca-card">
+      <h4>Enviar mensagem</h4>
+      <form class="ca-form" onsubmit="return addFeedback(event)">
+        <div class="ca-field radios">
+          <label class="opt"><input type="radio" name="fb_tipo" value="Elogio" required> Elogio</label>
+          <label class="opt"><input type="radio" name="fb_tipo" value="Sugestão"> Sugestão</label>
+        </div>
+        <div class="ca-field"><label>Seu nome</label><input type="text" id="fb_nome"></div>
+        <div class="ca-field"><label class="opt" style="display:flex;align-items:center;gap:8px;font-weight:400;"><input type="checkbox" id="fb_anon" style="width:auto;"> Prefiro manter anônimo</label></div>
+        <div class="ca-field"><label>Mensagem</label><textarea id="fb_mensagem" required></textarea></div>
+        <button class="ca-submit" type="submit">Enviar</button>
+      </form>
+    </div>
+  </div>`;
+}
+function renderFeedbackPanel(){ document.getElementById('panel-feedback').innerHTML = renderFeedback(); }
+function addFeedback(e){
+  e.preventDefault();
+  const tipo = document.querySelector('input[name="fb_tipo"]:checked').value;
+  const anon = document.getElementById('fb_anon').checked;
+  const items = DB.get('ca_feedback', []);
+  items.push({id:uid(), tipo, nome:document.getElementById('fb_nome').value.trim()||'Anônimo', anonimo:anon, mensagem:document.getElementById('fb_mensagem').value.trim(), data:new Date().toISOString()});
+  DB.set('ca_feedback', items);
+  renderFeedbackPanel();
+  toast('Mensagem enviada. Obrigado!');
+  return false;
+}
+
+/* ================= Painel: Fale com os Pastores ================= */
+const PASTORES = [
+  {nome:'Pastor João Silva', papel:'Pastor Presidente', whats:'5513900000000'},
+  {nome:'Pastora Maria Silva', papel:'Pastora', whats:'5513900000001'},
+];
+function initials(name){ return name.split(' ').filter(w=>w.length>2).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
+
+function renderContato(){
+  const pastoresHtml = PASTORES.map(p => `
+    <div class="ca-card ca-contact-card">
+      <div class="ca-avatar">${initials(p.nome)}</div>
+      <div>
+        <h4 style="margin-bottom:0;">${escapeHtml(p.nome)}</h4>
+        <div class="meta">${escapeHtml(p.papel)}</div>
+        <a class="ca-whats" href="https://wa.me/${p.whats}" target="_blank" rel="noopener">✆ Chamar no WhatsApp</a>
+      </div>
+    </div>`).join('');
+
+  const msgs = DB.get('ca_mensagens_pastores', []);
+  const list = msgs.length ? msgs.slice().reverse().map(it => `
+    <div class="ca-card">
+      <span class="badge">Mensagem enviada</span>
+      <h4>${escapeHtml(it.nome)}</h4>
+      <div class="meta">${escapeHtml(it.contato||'sem contato informado')} · ${fmtDate(it.data)}</div>
+      <p>${escapeHtml(it.mensagem)}</p>
+      <div class="row-actions"><button class="ca-linkbtn" onclick="removeItem('ca_mensagens_pastores','${it.id}', renderContatoPanel)">Remover</button></div>
+    </div>`).join('') : `<div class="ca-empty">Nenhuma mensagem enviada ainda por aqui.</div>`;
+
+  return `
+  <section class="ca-hero">
+    <div class="eyebrow">Cuidado pastoral</div>
+    <h2>Fale com os pastores</h2>
+    <p class="lead">Estamos aqui para orar, aconselhar e caminhar com você. Entre em contato diretamente.</p>
+  </section>
+  <div class="ca-grid cols-2">
+    <div>
+      <div class="ca-list">${pastoresHtml}</div>
+      <div style="height:16px;"></div>
+      <h3 style="font-family:var(--font-display);font-size:1.1rem;color:var(--text);">Mensagens enviadas</h3>
+      <div class="ca-list">${list}</div>
+    </div>
+    <div class="ca-card">
+      <h4>Enviar mensagem direta</h4>
+      <form class="ca-form" onsubmit="return addMensagemPastor(event)">
+        <div class="ca-field"><label>Seu nome</label><input type="text" id="ct_nome" required></div>
+        <div class="ca-field"><label>Telefone ou e-mail para retorno</label><input type="text" id="ct_contato" placeholder="Opcional"></div>
+        <div class="ca-field"><label>Mensagem</label><textarea id="ct_mensagem" required></textarea></div>
+        <button class="ca-submit" type="submit">Enviar mensagem</button>
+      </form>
+    </div>
+  </div>`;
+}
+function renderContatoPanel(){ document.getElementById('panel-contato').innerHTML = renderContato(); }
+function addMensagemPastor(e){
+  e.preventDefault();
+  const items = DB.get('ca_mensagens_pastores', []);
+  items.push({id:uid(), nome:document.getElementById('ct_nome').value.trim(), contato:document.getElementById('ct_contato').value.trim(), mensagem:document.getElementById('ct_mensagem').value.trim(), data:new Date().toISOString()});
+  DB.set('ca_mensagens_pastores', items);
+  renderContatoPanel();
+  toast('Mensagem enviada aos pastores!');
+  return false;
+}
+
+/* ================= Painel: Células ================= */
+function renderCelulas(){
+  const items = DB.get('ca_celulas', []);
+  const list = items.length ? items.slice().reverse().map(it => `
+    <div class="ca-card">
+      <span class="ca-cell-day">${escapeHtml(it.dia)}</span><span class="meta" style="display:inline;">${escapeHtml(it.horario)}</span>
+      <h4 style="margin-top:8px;">Célula de ${escapeHtml(it.lider)}</h4>
+      <div class="meta">${escapeHtml(it.bairro)}</div>
+      <p>${escapeHtml(it.endereco)}</p>
+      <div class="row-actions"><button class="ca-linkbtn" onclick="removeItem('ca_celulas','${it.id}', renderCelulasPanel)">Remover</button></div>
+    </div>`).join('') : `<div class="ca-empty">Nenhuma célula cadastrada ainda. Adicione a primeira!</div>`;
+
+  return `
+  <section class="ca-hero">
+    <div class="eyebrow">Comunhão nos lares</div>
+    <h2>Destinos das células</h2>
+    <p class="lead">Encontre a célula mais perto de você e faça parte de uma família dentro da família.</p>
+  </section>
+  <div class="ca-grid cols-2">
+    <div class="ca-list">${list}</div>
+    <div class="ca-card">
+      <h4>Cadastrar uma célula</h4>
+      <form class="ca-form" onsubmit="return addCelula(event)">
+        <div class="ca-field"><label>Líder responsável</label><input type="text" id="ce_lider" required></div>
+        <div class="ca-field"><label>Bairro</label><input type="text" id="ce_bairro" required></div>
+        <div class="ca-field"><label>Endereço completo</label><input type="text" id="ce_endereco" required></div>
+        <div class="ca-field"><label>Dia da semana</label>
+          <select id="ce_dia" required>
+            <option value="">Selecione...</option>
+            <option>Segunda-feira</option><option>Terça-feira</option><option>Quarta-feira</option>
+            <option>Quinta-feira</option><option>Sexta-feira</option><option>Sábado</option><option>Domingo</option>
+          </select>
+        </div>
+        <div class="ca-field"><label>Horário</label><input type="text" id="ce_horario" required placeholder="Ex: 19h30"></div>
+        <button class="ca-submit" type="submit">Cadastrar célula</button>
+      </form>
+    </div>
+  </div>`;
+}
+function renderCelulasPanel(){ document.getElementById('panel-celulas').innerHTML = renderCelulas(); }
+function addCelula(e){
+  e.preventDefault();
+  const items = DB.get('ca_celulas', []);
+  items.push({id:uid(), lider:document.getElementById('ce_lider').value.trim(), bairro:document.getElementById('ce_bairro').value.trim(), endereco:document.getElementById('ce_endereco').value.trim(), dia:document.getElementById('ce_dia').value, horario:document.getElementById('ce_horario').value.trim()});
+  DB.set('ca_celulas', items);
+  renderCelulasPanel();
+  toast('Célula cadastrada!');
+  return false;
+}
+
+/* ================= Item removal helper ================= */
+function removeItem(key, id, rerender){
+  const items = DB.get(key, []).filter(i => i.id !== id);
+  DB.set(key, items);
+  rerender();
+  toast('Removido.');
+}
+
+/* ================= Montagem inicial dos painéis ================= */
+const main = document.getElementById('mainContent');
+TABS.forEach(t=>{
+  const div = document.createElement('div');
+  div.className='ca-panel'; div.id='panel-'+t.id;
+  main.appendChild(div);
+});
+document.getElementById('panel-recados').innerHTML = renderRecados();
+document.getElementById('panel-obreiros').innerHTML = renderEscala('obreiros');
+document.getElementById('panel-musicos').innerHTML = renderEscala('musicos');
+document.getElementById('panel-oracao').innerHTML = renderOracao();
+document.getElementById('panel-feedback').innerHTML = renderFeedback();
+document.getElementById('panel-contato').innerHTML = renderContato();
+document.getElementById('panel-celulas').innerHTML = renderCelulas();
+
+const savedTab = localStorage.getItem('ca_lastTab');
+showTab(TABS.some(t=>t.id===savedTab) ? savedTab : 'recados');
+
+/* ================= Questionário de primeiro acesso ================= */
+const overlay = document.getElementById('modalOverlay');
+const formQ = document.getElementById('formQuestionario');
+
+document.querySelectorAll('input[name="q_funcao"]').forEach(r=>{
+  r.addEventListener('change', ()=>{
+    document.getElementById('q_funcao_qual_wrap').style.display =
+      document.querySelector('input[name="q_funcao"]:checked').value === 'Sim' ? 'block' : 'none';
+  });
+});
+
+function openQuestionario(manual){
+  const existing = DB.get('ca_questionario', null);
+  if(existing){
+    document.getElementById('q_nome').value = existing.nome || '';
+    document.getElementById('q_nasc').value = existing.nascimento || '';
+    if(existing.batizado){ const el = document.querySelector(`input[name="q_batizado"][value="${existing.batizado}"]`); if(el) el.checked = true; }
+    if(existing.funcao){ const el = document.querySelector(`input[name="q_funcao"][value="${existing.funcao}"]`); if(el){ el.checked = true; el.dispatchEvent(new Event('change')); } }
+    document.getElementById('q_funcao_qual').value = existing.funcaoQual || '';
+    if(existing.aceitou){ const el = document.querySelector(`input[name="q_aceitou"][value="${existing.aceitou}"]`); if(el) el.checked = true; }
+    document.getElementById('q_tempo').value = existing.tempo || '';
+  }
+  overlay.classList.remove('hidden');
+}
+function closeQuestionario(){
+  overlay.classList.add('hidden');
+  DB.set('ca_visitou', true);
+}
+formQ.addEventListener('submit', function(e){
+  e.preventDefault();
+  const data = {
+    nome: document.getElementById('q_nome').value.trim(),
+    nascimento: document.getElementById('q_nasc').value,
+    batizado: (document.querySelector('input[name="q_batizado"]:checked')||{}).value,
+    funcao: (document.querySelector('input[name="q_funcao"]:checked')||{}).value,
+    funcaoQual: document.getElementById('q_funcao_qual').value.trim(),
+    aceitou: (document.querySelector('input[name="q_aceitou"]:checked')||{}).value,
+    tempo: document.getElementById('q_tempo').value,
+  };
+  DB.set('ca_questionario', data);
+  DB.set('ca_visitou', true);
+  overlay.classList.add('hidden');
+  toast('Cadastro salvo. Bem-vindo(a)!');
+});
+
+if(!DB.get('ca_visitou', false)){
+  setTimeout(()=>openQuestionario(false), 400);
+}
+</script>
+</body>
+</html>
